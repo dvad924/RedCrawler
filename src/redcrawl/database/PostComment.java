@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class PostComment {
 	private static final String db_name="PostComments";
@@ -45,9 +46,9 @@ public class PostComment {
 	public Integer getTitleId() {
 		return titleId;
 	}
-	
 	public void addComment() throws SQLException{
-		Connection con = ConnectionFactory.getConnection();
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
 		try{
 			con.setAutoCommit(false);
 			if(id == null){
@@ -73,19 +74,41 @@ public class PostComment {
 			con.rollback();
 			throw sql;
 		}finally{
-			con.close();
+			//con.close();
 		}
 		
 	}
 	
-	public void addList(ArrayList<PostComment> list) throws SQLException{
-		for(PostComment comm : list){
-			comm.addComment();
+	public int[] addList(Collection <? extends PostComment> list,int Title_id) throws SQLException{
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
+		int[] returns = new int[list.size()];
+		try{
+			con.setAutoCommit(false);
+																							
+			String query = "INSERT INTO "+db_name+" (link,content,redditID,parentID) VALUES (?,?,?,?);";	//add new entry
+			PreparedStatement ps = con.prepareStatement(query);
+			for(PostComment pc : list){												//for every item in list
+				ps.setString(1, pc.link);
+				ps.setString(2,pc.content);
+				ps.setString(3, pc.redditID);
+				ps.setInt(4,Title_id);
+				ps.addBatch();													//add sql to batch
+			}
+			returns = ps.executeBatch();			//execute the batch of statements
+			con.commit();
+		}catch(SQLException sql){
+			con.rollback();
+			throw sql;
+		}finally{
+			//con.close();
 		}
+		return returns;
 	}
 	
-	public PostComment getTitleByRedditID(String id) throws SQLException{
-		Connection con = ConnectionFactory.getConnection();
+	public PostComment getCommentByRedditID(String id) throws SQLException{
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon(); 
 		PostComment comm = null; 
 		try{
 				String query = "Select * FROM "+db_name+" WHERE redditID == ?;";
@@ -102,14 +125,15 @@ public class PostComment {
 		}catch(SQLException sql){
 			throw sql;
 		}finally{
-			con.close();
+		//	con.close();
 		}
 		return comm;
 	
 	}
 	
-	public PostComment getTitleById(Integer id) throws SQLException{
-		Connection con = ConnectionFactory.getConnection();
+	public PostComment getCommentById(Integer id) throws SQLException{
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
 		PostComment comm = null; 
 		try{
 				String query = "Select * FROM "+db_name+" WHERE ID == ?;";
@@ -126,13 +150,14 @@ public class PostComment {
 		}catch(SQLException sql){
 			throw sql;
 		}finally{
-			con.close();
+			//con.close();
 		}
 		return comm;
 	}
 	
-	public ArrayList<PostComment> getTitleRange(Integer startID, Integer endID) throws SQLException{
-		Connection con = ConnectionFactory.getConnection();
+	public ArrayList<PostComment> getCommentRange(Integer startID, Integer endID) throws SQLException{
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
 		ArrayList<PostComment> list = new ArrayList<PostComment>(0); 
 		try{
 				String query = "Select * FROM "+db_name+" WHERE ID >= ? AND ID <= ?;";
@@ -152,8 +177,27 @@ public class PostComment {
 		}catch(SQLException sql){
 			throw sql;
 		}finally{
-			con.close();
+			//con.close();
 		}
 		return list;
+	}
+	public boolean commentExists() throws SQLException{
+		MyConnection mycon = null; 
+		boolean bool = false;
+		
+			mycon = ConnectionFactory.getConnection();
+			Connection con = mycon.getCon();
+			String query = "Select count(*) FROM "+db_name+" WHERE redditID=?"; //get links with the passed url
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, this.redditID);
+			ResultSet rs =  ps.executeQuery();
+			if( rs.next()){                  //if there are any return true, else return false
+				int count = rs.getInt(1);
+				if(count > 0)
+					bool = true;
+				else
+					bool = false;
+			}
+		return bool;
 	}
 }

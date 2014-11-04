@@ -18,6 +18,12 @@ public class TimeKeeper {
 		return tk;
 	}
 	
+	public long timeRemaining(){
+		DateTime now = DateTime.now();
+		long remaining = now.getMillis() - lastRequest.getMillis();
+		return remaining;
+	}
+	
 	public synchronized boolean timeAvailable(){
 		DateTime now = DateTime.now();
 		if( now.getMillis() - lastRequest.getMillis() >= timeGap )

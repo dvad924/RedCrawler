@@ -1,17 +1,35 @@
 package redcrawl.utils;
 
-public abstract class Request {
+public abstract class Request implements Runnable{
 	private TimeKeeper tk = TimeKeeper.getTimeKeeper();
+	private Boolean notInterrupted = true;
 	
-	public void makeRequest(){
+	public synchronized void toggleCont(){
+		this.notInterrupted = !this.notInterrupted;
+	}
+	public void run(){
+		boolean canContinue = true;
+		while(notInterrupted && canContinue){
 		if(tk.timeAvailable()){
-			executeRequest();
+			canContinue  = executeRequest();
+			if(!canContinue)
+				break;
 			tk.noteLastRequest();
 			processRequest();
+		} else{
+			try {
+				
+					Thread.sleep(tk.timeRemaining());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
+		safeSave();
 	}
 	
-	
-	public abstract void executeRequest();
+	public abstract void safeSave();
+	public abstract boolean executeRequest();
 	public abstract void processRequest();
 }

@@ -1,47 +1,38 @@
 package redcrawl.utils;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.joda.time.DateTime;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.parser.*;
-import org.jsoup.select.Elements;
-
-import redcrawl.database.*;
 import redcrawl.constants.Constants;
+import redcrawl.database.RawLink;
+import redcrawl.dstructs.CurrentQueue;
+
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Scanner;
 public class Main {
 
 	
-	public static void main(String[] args) {
-		/*HttpRetriever ret = new HttpRetriever();
-		String output = ret.getHTML("/r/programming");
+	public static void main(String[] args) throws SQLException {
+		CrawlRequest cr = new CrawlRequest(Constants.baseURL+Constants.subReddit);
+		Thread t = new Thread(cr);
+		t.start();
+		Scanner sc = new Scanner(System.in);
+		int input = 1;
+		while(input != 0){
+			input = sc.nextInt();
+		} //wait in prompt for a zero
+		sc.close();
+		cr.toggleCont();
 		
-		Document doc = Jsoup.parse(output);
-		Elements els = doc.select("a");
-		Iterator<Element> it = els.iterator();
+		
+		
+		
+	}
+	
+	public static void testPrint(CurrentQueue cq){
+		Iterator<RawLink> it = cq.getQueue().iterator();
 		while(it.hasNext()){
-			String href = it.next().attr("href");
-			if(href.startsWith(Constants.baseURL+"/r/programming"))
-				System.out.println(href);
-		}*/
-		//RobotsTxtParser rp = new RobotsTxtParser(output);
-		/*System.out.println(output);
-		for(String rule: rp.getRestrictions()){
-			System.out.println(rule);
-		}*/
-		RawLink link = new RawLink();
-		ArrayList<RawLink> links =null;
-		try{
-			links = link.getLinksAbove(0);
-		}catch(Exception e){
-			e.printStackTrace();
+			System.out.println(it.next().getLink());
 		}
-		for(RawLink l : links)
-			System.out.println(l.getLink() + " "+ l.getDateTime());
+		System.out.println();
 	}
 
 }

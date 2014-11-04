@@ -33,21 +33,39 @@ public class PostTitle {
 		return id;
 	}
 	
+	public int titleExists() throws SQLException{
+		MyConnection mycon = null; 
+		int id = -1;
+		
+			mycon = ConnectionFactory.getConnection();
+			Connection con = mycon.getCon();
+			String query = "Select * FROM "+db_name+" WHERE redditID=?"; //get links with the passed url
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setString(1, this.redditID);
+			ResultSet rs =  ps.executeQuery();
+			if( rs.next()){                  //if there are any return true, else return false
+				id = rs.getInt(1);
+			}
+		return id;
+	}
 	
-	public void addTitle() throws SQLException{
-		Connection con = ConnectionFactory.getConnection();
+	public int addTitle() throws SQLException{
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
+		int r = -1;
 		try{
 			con.setAutoCommit(false);
+			PreparedStatement ps;
 			if(id == null){
-				String query = "INSERT INTO "+db_name+" VALUES (auto,?,?,?);";
-				PreparedStatement ps = con.prepareStatement(query);
+				String query = "INSERT INTO "+db_name+" (link,content,redditID) VALUES (?,?,?);";
+				ps = con.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
 				ps.setString(1, this.link);
 				ps.setString(2, this.content);
 				ps.setString(3, this.redditID);
 				ps.executeUpdate();
 			}else{
 				String query = "UPDATE "+db_name+" LINK=?, content=?, redditID=?, where ID=?;";
-				PreparedStatement ps = con.prepareStatement(query);
+				ps = con.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
 				ps.setString(1, this.link);
 				ps.setString(2,this.content);
 				ps.setString(3,this.redditID);
@@ -55,13 +73,17 @@ public class PostTitle {
 				ps.executeUpdate();
 			}
 			con.commit();
+			ResultSet rs = ps.getGeneratedKeys();
+			if(rs.next()){
+				r = rs.getInt(1);
+			}
 		}catch(SQLException sql){
 			con.rollback();
 			throw sql;
 		}finally{
-			con.close();
+			//con.close();
 		}
-		
+		return r;
 	}
 	
 	public static void addList(ArrayList<PostTitle> list) throws SQLException{
@@ -71,7 +93,8 @@ public class PostTitle {
 	}
 	
 	public static PostTitle getTitleById(Integer id) throws SQLException{
-		Connection con = ConnectionFactory.getConnection();
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
 		PostTitle title = null; 
 		try{
 				String query = "Select * FROM "+db_name+" WHERE ID == ?;";
@@ -87,13 +110,14 @@ public class PostTitle {
 		}catch(SQLException sql){
 			throw sql;
 		}finally{
-			con.close();
+			//con.close();
 		}
 		return title;
 	}
 	
 	public static PostTitle getTitleByRedditId(Integer id) throws SQLException{
-		Connection con = ConnectionFactory.getConnection();
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
 		PostTitle title = null; 
 		try{
 				String query = "Select * FROM "+db_name+" WHERE ID == ?;";
@@ -109,13 +133,14 @@ public class PostTitle {
 		}catch(SQLException sql){
 			throw sql;
 		}finally{
-			con.close();
+			//con.close();
 		}
 		return title;
 	}
 	
 	public ArrayList<PostComment> getComments() throws SQLException{
-		Connection con = ConnectionFactory.getConnection();
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
 		ArrayList<PostComment> comments = new ArrayList<PostComment>(0);
 		try{
 			String query = "Select * FROM PostComments where parentID==?";
@@ -134,13 +159,14 @@ public class PostTitle {
 		}catch(SQLException sql){
 			throw sql;
 		}finally{
-			con.close();
+			//con.close();
 		}
 		return comments;
 	}
 	
 	public ArrayList<PostTitle> getTitleRange(Integer startID, Integer endID) throws SQLException{
-		Connection con = ConnectionFactory.getConnection();
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
 		ArrayList<PostTitle> list = new ArrayList<PostTitle>(0); 
 		try{
 				String query = "Select * FROM "+db_name+" WHERE ID >= ? AND ID <= ?;";
@@ -159,7 +185,7 @@ public class PostTitle {
 		}catch(SQLException sql){
 			throw sql;
 		}finally{
-			con.close();
+			//con.close();
 		}
 		return list;
 	}
