@@ -17,6 +17,9 @@ public class Constants {
 	private static void setRules(){
 		if(extraRules != null) 
 			return; 
-		extraRules.add("/related/");
+		else{
+			extraRules = new ArrayList<String>();
+			extraRules.add("/related/");
+		}
 	}
 }

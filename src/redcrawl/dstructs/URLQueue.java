@@ -43,6 +43,10 @@ public class URLQueue {
 		return queue.isEmpty() && dbQueue.isEmpty();
 	}
 	
+	public boolean  currentEmpty(){
+		return queue.isEmpty();
+	}
+	
 	/**
 	 * Add a URL to the Database queue
 	 * @param url
