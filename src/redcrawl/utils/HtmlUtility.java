@@ -18,6 +18,7 @@ public class HtmlUtility {
 		this.d = Jsoup.parse(html);
 		this.link = link;
 		this.rules = new RobotsTxtParser(new HttpRetriever().getHTML(Constants.baseURL+"/robots.txt")).getRules();
+		this.rules.addAll(Constants.getExtraRules());
 	}
 	
 	public boolean isLegal(String href){
@@ -49,7 +50,7 @@ public class HtmlUtility {
 		return linkList;
 	}
 	
-	public PostTitle getTitle(){
+	public PostTitle getTitle(String url){
 		Elements title = this.d.select(".title a.title"); //get the title element on the page 
 		Iterator<Element> it = title.iterator();
 		if(!it.hasNext())
@@ -57,10 +58,7 @@ public class HtmlUtility {
 		Element e = it.next();
 		PostTitle pt = new PostTitle();						//create database object
 		pt.setContent(e.text());
-		if(e.attr("href").startsWith(Constants.baseURL))	
-			pt.setLink(e.attr("href"));
-		else
-			pt.setLink(Constants.baseURL + e.attr("href"));
+		pt.setLink(url);
 		int index = link.indexOf("comments")+"comments/".length();
 		String reddit_id = "t3_"+link.substring(index, link.indexOf('/', index) );
 		pt.setRedditID(reddit_id);

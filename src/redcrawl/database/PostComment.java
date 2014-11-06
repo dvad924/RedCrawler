@@ -16,6 +16,16 @@ public class PostComment {
 	private String redditID;
 	private String parentID;
 	
+	public int hashCode(){
+		return redditID.hashCode();
+	}
+	
+	public boolean equals(Object o){
+		if(o == null) return false;
+		if(!(o instanceof PostComment)) return false;
+		return this.redditID.equals(((PostComment)o).redditID);
+	}
+	
 	public String getParentID() {
 		return parentID;
 	}
@@ -78,7 +88,40 @@ public class PostComment {
 		}
 		
 	}
+	public ArrayList<PostComment> listCheck(Collection <? extends PostComment> list) throws SQLException{
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
+		ArrayList<PostComment> rlist = new ArrayList<PostComment>();
+		String query = "SELECT redditID FROM PostComments WHERE";
+		int size = list.size();
+		int i = 1;
+		if(size == 0)
+			return rlist; //return empty list if the size of the comments list is zero
+		for(PostComment pc : list){
+			if(i++ < size)
+				query += " redditID='"+pc.getRedditID()+"' OR";
+			else
+				query += " redditID='"+pc.getRedditID()+"';";
+		}
+		PreparedStatement ps = con.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			PostComment pc = new PostComment();
+			pc.setRedditID(rs.getString(1));
+			rlist.add(pc);
+		}
+		return rlist;
+		
+	}
 	
+	public int[] sendList(Collection <? extends PostComment> list, int Title_id) throws SQLException{
+		ArrayList<PostComment> delList = listCheck(list);
+		for(PostComment pc : delList){
+			list.remove(pc);
+		}
+		return addList(list,Title_id);
+		
+	}
 	public int[] addList(Collection <? extends PostComment> list,int Title_id) throws SQLException{
 		MyConnection mcon = ConnectionFactory.getConnection();
 		Connection con = mcon.getCon();

@@ -1,13 +1,14 @@
 package redcrawl.dstructs;
 
-import redcrawl.constants.Constants;
-import redcrawl.database.RawLink;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+
+import redcrawl.constants.Constants;
+import redcrawl.database.RawLink;
 
 public class CommitQueue {
 	private LinkedHashSet<RawLink> queue;				//The queue to be commited to the database
@@ -80,8 +81,18 @@ public class CommitQueue {
 		}	
 	}
 	
+	public boolean containsString(String str){
+		RawLink rl = new RawLink(str);
+		return queue.contains(rl);
+	}
+	
 	private void pushQueueToDB() throws SQLException{
-		new RawLink().addList(queue);
+		RawLink operator = new RawLink();
+		ArrayList<RawLink> removals = operator.checkList(queue);
+		for(RawLink rl : removals){
+			queue.remove(rl);
+		}
+		operator.addList(queue);
 	}
 	
 	public boolean hasCommitted(){

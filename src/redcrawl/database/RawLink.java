@@ -123,6 +123,30 @@ public class RawLink {
 		}
 	}
 	
+	public ArrayList<RawLink> checkList(Collection <? extends RawLink> list) throws SQLException{
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
+		ArrayList<RawLink> arr= new ArrayList<RawLink>();
+		con.setAutoCommit(false);
+		String query = "Select LINK from rawlinks WHERE";
+		int size = list.size();
+		int i=1;
+		for(RawLink rl : list){
+	
+			if(i++ < size)
+				query += " LINK='"+ rl.getLink()+"' OR ";
+			else
+				query += " LINK='"+rl.getLink()+"';";
+		}
+		PreparedStatement ps = con.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			RawLink rawl = new RawLink(rs.getString(1));
+			arr.add(rawl);
+		}
+		return arr;
+	}
+	
 	/**
 	 * Adds an Arraylist of RawLinks to the database in batch 
 	 * to reduce traffic and the number of slow database calls

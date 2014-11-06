@@ -56,7 +56,7 @@ public class CrawlRequest extends Request {
 			queue.addURL(rl);
 		}
 		if(this.curlink.indexOf("comments") >0){
-			PostTitle pt = htmlutil.getTitle();
+			PostTitle pt = htmlutil.getTitle(curlink);
 			if(pt != null){
 				ArrayList<PostComment> comments = new ArrayList<PostComment>();
 				if( !(pt.getRedditID() == null || pt.getRedditID().isEmpty()) ){
@@ -68,7 +68,7 @@ public class CrawlRequest extends Request {
 					int id = pt.titleExists(); //if the title exists get its id
 					if(id < 0)
 						id = pt.addTitle();         //if it doesn't exist add title
-					pc.addList(comments,id);   //add the comment to that title
+					pc.sendList(comments,id);   //add the comment to that title
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

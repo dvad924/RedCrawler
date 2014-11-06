@@ -22,9 +22,6 @@ public class Main {
 		sc.close();
 		cr.toggleCont();
 		
-		
-		
-		
 	}
 	
 	public static void testPrint(CurrentQueue cq){
