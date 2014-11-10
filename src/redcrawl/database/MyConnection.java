@@ -11,6 +11,18 @@ public class MyConnection {
 	public Connection getCon(){
 		return this.con;
 	}
+	
+	public static void reset() throws SQLException{
+		if(c == null){
+			getConnection();
+			return;
+		}
+		if(!c.con.isClosed())
+			c.con.close();
+		c.con = c.new ConnectionBuilder().getConnection();
+		
+	}
+	
 	private MyConnection() throws SQLException{
 		this.con = new ConnectionBuilder().getConnection();
 		Runtime.getRuntime().addShutdownHook(new Thread(){

@@ -37,16 +37,32 @@ public class HtmlUtility {
 		Elements els = d.select("a");
 		Iterator<Element> it = els.iterator();
 		while(it.hasNext()){
-			String link = it.next().attr("href");
-			if(link.startsWith(base) && isLegal(link)){
-				RawLink rl = new RawLink(link);
-				linkList.add(rl);
-			}
-			else if(link.startsWith(Constants.subReddit) && isLegal(link)){
-				RawLink rl = new RawLink(Constants.baseURL+link);
-				linkList.add(rl);
+			Element anchor = it.next();
+			String link = anchor.attr("href");
+			if(!anchor.text().equals("parent")){
+				if(link.startsWith(base) && isLegal(link)){
+					RawLink rl = new RawLink(link);
+					linkList.add(rl);
+				}
+				else if(!Constants.subReddit.isEmpty() && link.startsWith(Constants.subReddit) && isLegal(link)){
+					RawLink rl = new RawLink(Constants.baseURL+link);
+					linkList.add(rl);
+				}
 			}
 		}
+//		Elements mores = d.select("span.morecomments");
+//		Iterator<Element> it2 = mores.iterator();
+//		while(it2.hasNext()){
+//			Elements parents = it.next().parents();
+//			Iterator<Element> pit = parents.iterator();
+//			while(pit.hasNext()){
+//				if(pit.next().hasClass("entry unvoted")){
+//					
+//				}
+//			}
+//			
+//		}
+		
 		return linkList;
 	}
 	

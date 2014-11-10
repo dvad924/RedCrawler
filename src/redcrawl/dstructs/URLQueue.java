@@ -71,6 +71,16 @@ public class URLQueue {
 		return queue.peekTopString();
 	}
 	
+	public void refresh(){
+		try {
+			queue.refresh();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			System.err.print("Error refreshing Queue");
+			e.printStackTrace();
+		}
+	}
+	
 	public void save(){
 		dbQueue.save();
 	}

@@ -1,5 +1,6 @@
 package ui;
 
+import redcrawl.database.MyConnection;
 import redcrawl.utils.*;
 
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.sql.SQLException;
 
 
 public class UserInterface extends JFrame {
@@ -57,7 +59,7 @@ public class UserInterface extends JFrame {
 		toggleButton.addActionListener(new ToggleListener());
 		subRedditField = new JTextField(20);
 		output = new JTextArea(40, 45);
-		output.getDocument().addDocumentListener(new LimitLinesDocumentListener(5));
+		output.getDocument().addDocumentListener(new LimitLinesDocumentListener(1000));
 		scrollPane = new JScrollPane(output);
 		output.setEnabled(false);
 		output.setBackground(Color.BLACK);
@@ -87,6 +89,13 @@ public class UserInterface extends JFrame {
 			else{
 				started = !started;
 				runner.end();
+				try {
+					MyConnection.reset();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					System.err.print("Error reseting Connection");
+					e1.printStackTrace();
+				}
 				closer.setMain(null);
 				toggleButton.setToolTipText("press to begin crawling");
 				toggleButton.setText("Start");

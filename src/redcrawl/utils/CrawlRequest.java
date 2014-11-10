@@ -75,10 +75,12 @@ public class CrawlRequest extends Request {
 			}
 		}
 		queue.popNextURL(); 							//clears this url from the queue;
-		if(!queue.isEmpty())
+		if(!queue.isEmpty()){
 			System.out.println("Request Processed");
-		else{
-			System.out.println("Crawling finished, No more links");
+			if(queue.currentEmpty()){
+				queue.save();
+				queue.refresh();
+			}
 		}
 	}
 	

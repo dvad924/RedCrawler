@@ -4,9 +4,15 @@ import redcrawl.constants.Constants;
 import redcrawl.database.RawLink;
 import redcrawl.dstructs.CurrentQueue;
 
+import java.io.*;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Scanner;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 public class Main {
 
 	private CrawlRequest cr;
@@ -17,7 +23,7 @@ public class Main {
 		t = new Thread(cr);
 	}
 	
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, IOException {
 		Main runner = new Main();
 		runner.begin();
 		Scanner sc = new Scanner(System.in);
@@ -26,7 +32,7 @@ public class Main {
 			input = sc.nextInt();
 		} //wait in prompt for a zero
 		sc.close();
-		runner.end();
+		runner.end();	
 		
 	}
 	

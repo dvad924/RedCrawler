@@ -27,6 +27,8 @@ public abstract class Request implements Runnable{
 			}
 		}
 		safeSave();
+		if(!canContinue)
+			System.out.println("Crawling finished, No more links");
 	}
 	
 	public abstract void safeSave();

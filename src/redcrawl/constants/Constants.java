@@ -5,9 +5,9 @@ import java.util.ArrayList;
 public class Constants {
 	public static final String user_agent = "DV-MG-IR-csi550 http://www.albany.edu/~dv222552";
 	public static final String baseURL = "http://www.reddit.com";
-	public static final Integer MemoryQueueLength = 2;
-	public static final Integer DBQueueLength = 5;
-	public static final String subReddit = "/r/getralphlaid/";
+	public static final Integer MemoryQueueLength = 100;
+	public static final Integer DBQueueLength = 500;
+	public static final String subReddit = "";//"/r/explainlikeimfive/";
 	private static ArrayList<String> extraRules = null;
 	public static ArrayList<String> getExtraRules(){
 		setRules();
@@ -20,6 +20,7 @@ public class Constants {
 		else{
 			extraRules = new ArrayList<String>();
 			extraRules.add("/related/");
+			extraRules.add("/user/");
 		}
 	}
 }

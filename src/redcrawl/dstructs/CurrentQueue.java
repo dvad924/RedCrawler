@@ -23,7 +23,6 @@ public class CurrentQueue {
 	 * @return queue instance
 	 */
 	public static CurrentQueue getCurrentQueue(){
-		if(count == 0){
 			cq = new CurrentQueue();
 			try{
 				cq.refresh();
@@ -31,12 +30,10 @@ public class CurrentQueue {
 				System.err.println("Error initializing Queue from  database");
 				System.exit(1);
 			}
-			count += 1;
-		}
-		return cq;
+			return cq;
 	}
 	
-	private void refresh() throws SQLException{
+	public void refresh() throws SQLException{
 		RawLink rl = new RawLink();		
 		queue.addAll(rl.getUnseen(Constants.MemoryQueueLength)); //get as many unseen urls as will fit
 	}

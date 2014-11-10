@@ -32,10 +32,7 @@ public class CommitQueue {
 	 * @return
 	 */
 	public static CommitQueue getCommitQueue(){
-		if( count == 0){
-			cq = new CommitQueue();
-			count +=1; 
-		}
+		cq = new CommitQueue();
 		return cq;
 	}
 	
