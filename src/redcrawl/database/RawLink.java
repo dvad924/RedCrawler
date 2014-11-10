@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 
+
 import org.joda.time.DateTime;
 
 import redcrawl.constants.Constants;
@@ -308,6 +309,32 @@ public class RawLink {
 		
 		return bool;
 	}
+	
+	public ArrayList<RawLink> listCheck(Collection <? extends RawLink> list) throws SQLException{
+		MyConnection mcon = ConnectionFactory.getConnection();
+		Connection con = mcon.getCon();
+		ArrayList<RawLink> rlist = new ArrayList<RawLink>();
+		String query = "SELECT LINK FROM rawlinks WHERE";
+		int size = list.size();
+		int i = 1;
+		if(size == 0)
+			return rlist; //return empty list if the size of the comments list is zero
+		for(RawLink rl : list){
+			if(i++ < size)
+				query += " LINK='"+rl.getLink()+"' OR";
+			else
+				query += " LINK='"+rl.getLink()+"';";
+		}
+		PreparedStatement ps = con.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			RawLink rl = new RawLink();
+			rl.setLink(rs.getString(1));
+			rlist.add(rl);
+		}
+		return rlist;
+	}
+	
 	public boolean linkExists() throws SQLException{
 		MyConnection mycon = null; 
 		boolean bool = false;

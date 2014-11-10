@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 public class CurrentQueue {
 	private LinkedHashSet<RawLink> queue;					//queue for url to be used next
 	private Integer length = Constants.MemoryQueueLength;	//length of the queue
-	private static int count = 0;							//Singleton check
+	//private static int count = 0;							//Singleton check
 	private static CurrentQueue cq;							//Singleton instance
 
 	private CurrentQueue(){

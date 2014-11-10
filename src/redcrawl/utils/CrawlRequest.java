@@ -3,6 +3,8 @@ package redcrawl.utils;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.joda.time.DateTime;
+
 import redcrawl.database.*;
 import redcrawl.dstructs.URLQueue;
 /**
@@ -25,7 +27,7 @@ public class CrawlRequest extends Request {
 		this.httpr = new HttpRetriever();
 		this.queue = new URLQueue();
 		if(this.queue.isEmpty()){
-			queue.addURL(new RawLink(root));
+			queue.add(new RawLink(root));
 		}
 	}
 	
@@ -39,6 +41,7 @@ public class CrawlRequest extends Request {
 		if(this.curlink == null)
 			return false;
 		System.out.println("Requesting: "+this.curlink);
+		System.out.println(DateTime.now().toString());
 		output = httpr.getHTML(this.curlink);  	  //store the html
 		return true;
 	}
@@ -52,9 +55,7 @@ public class CrawlRequest extends Request {
 			return;									
 		HtmlUtility htmlutil = new HtmlUtility(output,curlink);
 		ArrayList<RawLink> links = htmlutil.getLinks();
-		for(RawLink rl : links){
-			queue.addURL(rl);
-		}
+		queue.addURLs(links);
 		if(this.curlink.indexOf("comments") >0){
 			PostTitle pt = htmlutil.getTitle(curlink);
 			if(pt != null){

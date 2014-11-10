@@ -39,7 +39,9 @@ public class HtmlUtility {
 		while(it.hasNext()){
 			Element anchor = it.next();
 			String link = anchor.attr("href");
-			if(!anchor.text().equals("parent")){
+			//if we try all comments then we only filter out parent links, 
+			//if we don't try all we don't take any of the permalink links
+			if(!anchor.text().equals("parent") && (Constants.tryAllComments)? true:!anchor.text().equals("permalink")){
 				if(link.startsWith(base) && isLegal(link)){
 					RawLink rl = new RawLink(link);
 					linkList.add(rl);

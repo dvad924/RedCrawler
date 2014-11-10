@@ -13,7 +13,7 @@ import redcrawl.database.RawLink;
 public class CommitQueue {
 	private LinkedHashSet<RawLink> queue;				//The queue to be commited to the database
 	private Integer length = Constants.DBQueueLength;	//The length of the queue base on config
-	private static int count = 0;						//Singleton check 
+	//private static int count = 0;						//Singleton check 
 	private static CommitQueue cq;						//Singleton instance
 	private boolean hasCommitted;						//yes/no has contacted database
 	
@@ -52,14 +52,6 @@ public class CommitQueue {
 	 * @return
 	 */
 	public boolean addString(RawLink rl){
-		try{
-			if(rl.linkExists()){			//Check if this link exists in the database
-				return false;				//if it does end
-			}
-		}catch(SQLException sql){
-			System.err.println("Error Checking for link existance");
-			sql.printStackTrace();
-		}
 		if(this.queue.size() + 1 < length){	//if it will fit in the queue
 			queue.add(rl);					//simply add it
 			return true;

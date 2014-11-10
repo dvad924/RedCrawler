@@ -7,7 +7,8 @@ public class Constants {
 	public static final String baseURL = "http://www.reddit.com";
 	public static final Integer MemoryQueueLength = 100;
 	public static final Integer DBQueueLength = 500;
-	public static final String subReddit = "";//"/r/explainlikeimfive/";
+	public static final String subReddit = "/r/explainlikeimfive/";
+	public static final boolean tryAllComments = false;
 	private static ArrayList<String> extraRules = null;
 	public static ArrayList<String> getExtraRules(){
 		setRules();
