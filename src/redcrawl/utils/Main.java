@@ -33,7 +33,6 @@ public class Main {
 		} //wait in prompt for a zero
 		sc.close();
 		runner.end();	
-		
 	}
 	
 	public void begin(){

@@ -311,9 +311,10 @@ public class RawLink {
 	}
 	
 	public ArrayList<RawLink> listCheck(Collection <? extends RawLink> list) throws SQLException{
+		ArrayList<RawLink> rlist = new ArrayList<RawLink>();
+		if(list.size()>0){
 		MyConnection mcon = ConnectionFactory.getConnection();
 		Connection con = mcon.getCon();
-		ArrayList<RawLink> rlist = new ArrayList<RawLink>();
 		String query = "SELECT LINK FROM rawlinks WHERE";
 		int size = list.size();
 		int i = 1;
@@ -332,6 +333,7 @@ public class RawLink {
 			rl.setLink(rs.getString(1));
 			rlist.add(rl);
 		}
+		}	
 		return rlist;
 	}
 	
@@ -430,6 +432,24 @@ public class RawLink {
 				int id = rs.getInt(1);
 				this.id = id;
 			}
+	}
+
+	public void delete() {
+		MyConnection mycon = null; 
+		boolean bool = false;
+		if(this.id == null)
+			return;
+		try{
+			mycon = ConnectionFactory.getConnection();
+			Connection con = mycon.getCon();
+			String query = "Delete FROM rawlinks WHERE id=?"; //get links with the passed url
+			PreparedStatement ps = con.prepareStatement(query);
+			ps.setInt(1, this.id);
+			ps.executeUpdate();
+		}catch(SQLException sql){
+			System.err.println("Error Deleting Link"+this.link);
+			sql.printStackTrace();
+		}
 	}
 	
 }

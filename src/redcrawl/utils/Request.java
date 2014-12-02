@@ -1,5 +1,7 @@
 package redcrawl.utils;
 
+import org.joda.time.DateTime;
+
 public abstract class Request implements Runnable{
 	private TimeKeeper tk = TimeKeeper.getTimeKeeper();
 	private Boolean notInterrupted = true;

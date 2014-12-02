@@ -13,6 +13,8 @@ public class URLQueue {
 	public URLQueue(){
 		queue = CurrentQueue.getCurrentQueue(); //queue for urls to be crawled
 		dbQueue = CommitQueue.getCommitQueue();//queue for urls that are to be added to db
+		if(queue.size() > 0) //if there was something already in the database , then commit queue committed on previous round
+			dbQueue.setCommitted(true);
 	}
 	
 	/**
@@ -23,7 +25,7 @@ public class URLQueue {
 		//no matter what add to the dbQueue
 		addDbQueueURL(url);
 		//add this url to the current queue if possible
-		addQueueURL(url);
+		//addQueueURL(url); stack the database queue and refresh from database when empty
 	}
 	
 	public void add(RawLink link){
@@ -44,15 +46,15 @@ public class URLQueue {
 		ArrayList<RawLink> alreadySeen = null;
 		try {
 			alreadySeen = new RawLink().listCheck(urls); //check the list we got from reddit against our database
+			for(RawLink rl : alreadySeen){    //remove any links that we have already seen
+				urls.remove(rl);
+			}
+			for(RawLink link : urls){        //then add whatever remains to the queue
+				addURL(link);
+			}
 		} catch (SQLException e) {
 			System.err.println("Error Checking list against db");
 			e.printStackTrace();
-		}
-		for(RawLink rl : alreadySeen){    //remove any links that we have already seen
-			urls.remove(rl);
-		}
-		for(RawLink link : urls){        //then add whatever remains to the queue
-			addURL(link);
 		}
 	}
 	
@@ -61,6 +63,7 @@ public class URLQueue {
 	 * @param url
 	 */
 	private void addQueueURL(RawLink url){
+		/**this config needs to change or there is risk of infinite looping*/
 		if(!dbQueue.hasCommitted()) //if nothing has been committed to the database 
 			queue.addString(url);
 	}
@@ -109,5 +112,16 @@ public class URLQueue {
 	
 	public void save(){
 		dbQueue.save();
+	}
+
+	public void popAndDelete() {
+		queue.popAndDelete();
+		try {
+			queue.refresh();
+		} catch (SQLException e) {
+			System.err.println("Error refreshing Queue after deleting bad link");
+			e.printStackTrace();
+		}
+		
 	}
 }

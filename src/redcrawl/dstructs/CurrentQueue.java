@@ -95,5 +95,18 @@ public class CurrentQueue {
 			return null;
 		return it.next().getLink();					//otherwise return the link
 	}
-	
+
+	public int size(){
+		return this.queue.size();
+	}
+	public void popAndDelete() {
+		Iterator<RawLink> it = queue.iterator();
+		if(!it.hasNext())
+			return;
+		RawLink rl = it.next();
+		it.remove();
+		rl.delete();
+		
+		
+	}
 }

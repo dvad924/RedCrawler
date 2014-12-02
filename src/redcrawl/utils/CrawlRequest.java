@@ -19,6 +19,7 @@ public class CrawlRequest extends Request {
 	private URLQueue queue;			//URLQueue to enqueue the links found in requests
 	private String output;			//The output html of the latest request
 	private String curlink;
+	private HtmlUtility htmlutil = new HtmlUtility(true);
 	/**
 	 * Constructor takes the root url filter to be used in crawling
 	 * @param root
@@ -50,10 +51,14 @@ public class CrawlRequest extends Request {
 	 */
 	public void processRequest() {
 //		// TODO Auto-generated method stub
+		
+		if((output == null) || output.isEmpty()){		//if nothing came of the last request do nothing
+			queue.popAndDelete();
+			return;								
+		}
 		System.out.println("Request received properly");
-		if((output == null) && output.isEmpty())		//if nothing came of the last request do nothing
-			return;									
-		HtmlUtility htmlutil = new HtmlUtility(output,curlink);
+		htmlutil.setLink(curlink);
+		htmlutil.setDoc(output);
 		ArrayList<RawLink> links = htmlutil.getLinks();
 		queue.addURLs(links);
 		if(this.curlink.indexOf("comments") >0){

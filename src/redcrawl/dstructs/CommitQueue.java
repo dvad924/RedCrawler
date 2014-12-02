@@ -88,13 +88,17 @@ public class CommitQueue {
 		return this.hasCommitted;
 	}
 	
+	public void setCommitted(boolean commit){
+		this.hasCommitted = commit;
+	}
+	
 	public void save(){
 		try{
 			pushQueueToDB();
 			queue.clear();
 		}catch(SQLException sql){
 			try{
-				FileWriter f = new FileWriter("/home/dvad924/proj/java/workspace/RedCrawler/DBsavefail.txt");
+				FileWriter f = new FileWriter("C:\\Users\\david\\Documents\\springworkspace\\DBsavefail.txt");
 				BufferedWriter bfw = new BufferedWriter(f);
 				for(RawLink rl : queue){
 					bfw.write(rl.toString());
